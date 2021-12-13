@@ -6,13 +6,14 @@ Documentation   A resource file with reusable variables and keywords
 Library         SeleniumLibrary
 
 *** Variables ***
-${SERVER}           www.saucedemo.com
-${BROWSER}          edge
-${DELAY}            0
-${VALID USER}       standard_user
-${LOCKED OUT USER}  locked_out_user
-${PROBLEM USER}     problem_user
-${VALID PASSWORD}   secret_sauce
+${SERVER}               www.saucedemo.com
+${BROWSER}              edge
+${DELAY}                0
+${VALID USER}           standard_user
+${LOCKED OUT USER}      locked_out_user
+${PROBLEM USER}         problem_user
+${VALID PASSWORD}       secret_sauce
+${INVALID PASSWORD}     oops
 ${LOGIN URL}    https://${SERVER}/
 ${HOME URL}     https://${SERVER}/inventory.html
 
@@ -29,6 +30,12 @@ Login Page Should Be Open
 Product Page Should Be Open
     Element Text Should Be      class:title     PRODUCTS
 
+Go To Product Page 
+    Input Username  ${VALID USER}
+    Input Pass      ${VALID PASSWORD}
+    Submit Credentials
+    Product Page Should Be Open
+
 Input Username
     [Arguments]     ${username}
     Input Text  user-name   ${username}
@@ -39,3 +46,14 @@ Input Pass
 
 Submit Credentials
     Click Button    login-button
+
+Sort By
+    [Arguments]     ${method}
+    Select From List By Value   class:product_sort_container    ${method}
+
+# Invalid cases
+Locked Out Prompt Should Show
+    Element Text Should Be      xpath://*[@id="login_button_container"]/div/form/div[3]/h3     Epic sadface: Sorry, this user has been locked out.
+
+Invalid Password Prompt Should Show
+    Element Text Should Be      xpath://*[@id="login_button_container"]/div/form/div[3]/h3     Epic sadface: Username and password do not match any user in this service
